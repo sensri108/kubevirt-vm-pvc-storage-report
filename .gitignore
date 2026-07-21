@@ -1,0 +1,6 @@
+# Generated reports -- these contain namespace names, VM hostnames, storage
+# class identifiers and a capacity map of your cluster. Never commit them.
+vm-pvc-report-*.csv
+vm-pvc-report-*.json
+
+.DS_Store

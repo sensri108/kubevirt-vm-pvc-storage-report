@@ -1,0 +1,38 @@
+NAMESPACE,VM NAME,VM STATUS,PVC NAME,STORAGE CLASS,PVC PHASE,ACCESS MODE,PROVISIONED,USED,USAGE%
+team-alpha,app-web-01,Running,app-web-01-disk-0-a1b2c,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,34.57 GiB,34.60%
+team-alpha,app-web-01,Running,app-web-01-disk-1-d3e4f,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,1000.00 GiB,6.60 GiB,0.70%
+team-alpha,app-web-02,Running,app-web-02-disk-0-g5h6i,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,32.02 GiB,32.00%
+team-alpha,app-web-02,Running,app-web-02-disk-1-j7k8l,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,1000.00 GiB,1.70 GiB,0.20%
+team-alpha,app-cache-01,Stopped,app-cache-01-disk-0-m9n0o,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,22.64 GiB,15.10%
+team-alpha,app-cache-01,Stopped,app-cache-01-disk-1-p1q2r,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,0.07 GiB,0.10%
+team-beta,db-primary-01,Running,db-primary-01-disk-0-s3t4u,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,63.32 GiB,42.20%
+team-beta,db-primary-01,Running,db-primary-01-disk-1-v5w6x,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,250.00 GiB,18.73 GiB,7.50%
+team-beta,db-primary-01,Running,db-primary-01-disk-2-y7z8a,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,500.00 GiB,29.60 GiB,5.90%
+team-beta,db-replica-01,Running,db-replica-01-disk-0-b9c0d,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,32.64 GiB,21.80%
+team-beta,db-replica-01,Running,db-replica-01-disk-1-e1f2g,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,250.00 GiB,5.43 GiB,2.20%
+team-beta,db-archive-01,Running,db-archive-01-disk-0-h3i4j,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,44.13 GiB,29.40%
+team-beta,db-archive-01,Running,db-archive-01-disk-1-k5l6m,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,3072.00 GiB,1132.65 GiB,36.90%
+team-beta,db-archive-01,Running,db-archive-01-disk-2-n7o8p,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,3072.00 GiB,2106.47 GiB,68.60%
+team-gamma,ci-runner-01,Running,ci-runner-01-disk-0-q9r0s,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,29.02 GiB,19.30%
+team-gamma,ci-runner-01,Running,ci-runner-01-disk-1-t1u2v,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,500.00 GiB,0.35 GiB,0.10%
+team-gamma,ci-runner-02,Running,ci-runner-02-disk-0-w3x4y,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,35.49 GiB,23.70%
+team-gamma,ci-runner-02,Running,ci-runner-02-disk-1-z5a6b,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,57.13 GiB,57.10%
+team-gamma,build-cache-01,Running,build-cache-01-disk-0-c7d8e,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,50.00 GiB,48.75 GiB,97.50%
+team-gamma,build-cache-01,Running,build-cache-01-disk-1-f9g0h,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,40.00 GiB,35.04 GiB,87.60%
+team-gamma,build-cache-01,Running,build-cache-01-disk-2-i1j2k,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,30.00 GiB,0.02 GiB,0.10%
+team-delta,analytics-01,Running,analytics-01-disk-0-l3m4n,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,86.68 GiB,57.80%
+team-delta,analytics-01,Running,analytics-01-disk-1-o5p6q,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,500.00 GiB,102.25 GiB,20.40%
+team-delta,analytics-01,Running,analytics-01-disk-2-r7s8t,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,0.08 GiB,0.10%
+team-delta,analytics-02,Running,analytics-02-disk-0-u9v0w,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,56.76 GiB,37.80%
+team-delta,analytics-02,Running,analytics-02-disk-1-x1y2z,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,500.00 GiB,231.95 GiB,46.40%
+team-delta,analytics-02,Running,analytics-02-disk-2-a3b4c,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,2000.00 GiB,61.80 GiB,3.10%
+team-epsilon,legacy-app-01,Running,legacy-app-01-disk-0-d5e6f,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,149.28 GiB,99.50%
+team-epsilon,legacy-app-01,Running,legacy-app-01-disk-1-g7h8i,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,2.74 GiB,1.80%
+team-epsilon,legacy-app-01,Running,dv-legacy-app-01-pvc-legacy-app-01-disk-2-j9k0l,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,400.00 GiB,293.28 GiB,73.30%
+team-epsilon,scratch-vm-01,Stopped,(no-disk),-,-,-,-,N/A,N/A
+team-epsilon,filestore-01,Running,filestore-01-disk-0-m1n2o,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,150.00 GiB,30.41 GiB,20.30%
+team-epsilon,filestore-01,Running,filestore-01-disk-1-p3q4r,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,2000.00 GiB,4.60 GiB,0.20%
+team-epsilon,filestore-01,Running,filestore-01-disk-2-s5t6u,px-rwx-block-kubevirt-demo,Bound,ReadWriteMany,100.00 GiB,5.60 GiB,5.60%
+team-zeta,pending-vm-01,Running,pending-vm-01-disk-0-v7w8x,px-rwx-block-kubevirt-demo,Pending,ReadWriteMany,100.00 GiB,N/A,N/A
+team-zeta,orphan-ref-01,Running,orphan-ref-01-disk-0-y9z0a,-,NotFound,-,0.00 GiB,N/A,N/A
+TOTAL,,,,,,,17514.00 GiB,4761.80 GiB,

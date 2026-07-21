@@ -1,10 +1,10 @@
 # KubeVirt VM → PVC Storage Report
 
-A single-file Bash tool that answers a question KubeVirt and OpenShift Virtualization make surprisingly hard: **for every VM in my cluster, which PVCs back it, how much space did I provision, and how much is actually used?**
+A single-file Bash tool for **OpenShift Virtualization (OpenShift Container Platform)** that answers a question the platform makes surprisingly hard: **for every VM in my cluster, which PVCs back it, how much space did I provision, and how much is actually used?**
 
-`oc get vm` tells you nothing about storage. `oc get pvc` tells you nothing about which VM owns a claim. This script joins the two — walking each `VirtualMachine`'s volume list, resolving every `persistentVolumeClaim` and `dataVolume` reference to a real PVC, and (optionally) enriching each row with live usage from Prometheus/Thanos.
+`oc get vm` tells you nothing about storage. `oc get pvc` tells you nothing about which VM owns a claim. This script joins the two — walking each `VirtualMachine`'s volume list, resolving every `persistentVolumeClaim` and `dataVolume` reference to a real PVC, and (optionally) enriching each row with live usage from the cluster's Thanos/Prometheus stack.
 
-Output is a terminal table, CSV, or JSON.
+Everything runs through `oc` against a cluster you are already logged into. Output is a terminal table, CSV, or JSON.
 
 ```
 NAMESPACE     VM NAME        VM STATUS  PVC NAME               STORAGE CLASS               PVC PHASE  ACCESS MODE    PROVISIONED  USED        USAGE%
@@ -57,7 +57,7 @@ Everything is bulk-fetched: the script makes a constant number of API calls rega
 | | |
 |---|---|
 | **bash 4.0+** | Uses associative arrays (`declare -A`) and `mapfile`. **macOS ships bash 3.2 — see below.** |
-| **`oc`** | Logged in (`oc login`). `kubectl` works with a small change, see [Using kubectl](#using-kubectl). |
+| **`oc`** | The OpenShift CLI, logged in (`oc login`). Used for all cluster access, current-project resolution, and the default Prometheus token. |
 | **`jq`** | All JSON parsing. |
 | **`curl`, `awk`, `column`** | Present on essentially every system. |
 | **Prometheus/Thanos** | Optional. Without it the report still gives you full provisioned-capacity inventory; `USED` and `USAGE%` read `N/A`. |
@@ -210,10 +210,6 @@ Equivalents by backend:
 The only requirement is that the series carry `namespace` and `pvc` labels. If yours are labelled differently, adjust the `jq` selector inside `fetch_metric`.
 
 If the query fails or returns nothing, the script warns once and continues with `N/A` — a missing Prometheus never costs you the inventory report.
-
-## Using kubectl
-
-The script uses `oc` for login detection and current-project resolution. To run it against upstream KubeVirt with `kubectl`, replace `oc get` with `kubectl get`, drop the `oc whoami` preflight check, and pass `-n` explicitly (there is no `kubectl project -q` equivalent).
 
 ## Permissions
 

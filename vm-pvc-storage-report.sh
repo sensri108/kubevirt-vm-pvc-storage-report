@@ -90,6 +90,18 @@ to_gib() {
   }'
 }
 
+# ── human-readable scaling for summary totals ──────────────────────────────
+# Takes a GiB value and scales it to the largest unit that keeps it readable.
+# Used for the summary line only -- per-row values stay in GiB so that rows
+# remain sortable and directly comparable in a spreadsheet.
+fmt_size() {
+  awk -v g="$1" 'BEGIN {
+    if      (g >= 1048576) printf "%.2f PiB", g/1048576
+    else if (g >= 1024)    printf "%.2f TiB", g/1024
+    else                   printf "%.2f GiB", g
+  }'
+}
+
 # ── optional Prometheus used-bytes ─────────────────────────────────────────
 # ── Portworx used + capacity from Thanos (block-volume aware) ────────────────
 declare -A PROM_USED PROM_CAP
@@ -210,9 +222,9 @@ render_table() {
   echo -e "${BOLD}Summary${NC}"
   printf "  VMs found         : %s\n"     "$VM_COUNT"
   printf "  PVC rows          : %s\n"     "${#ROWS[@]}"
-  printf "  Total Provisioned : %s GiB\n" "$TOTAL_PROV"
+  printf "  Total Provisioned : %s  (%s GiB)\n" "$(fmt_size "$TOTAL_PROV")" "$TOTAL_PROV"
   if (( ROWS_WITH_USED > 0 )); then
-    printf "  Total Used        : %s GiB\n" "$TOTAL_USED"
+    printf "  Total Used        : %s  (%s GiB)\n" "$(fmt_size "$TOTAL_USED")" "$TOTAL_USED"
   else
     printf "  Total Used        : N/A  (pass -p <prometheus-url> to enable)\n"
   fi
@@ -238,11 +250,15 @@ render_json() {
     arr="${arr%,}}"
   done
   arr+="]"
-  echo "$arr" | jq --arg scope "$NS_LABEL" '{
+  echo "$arr" | jq --arg scope "$NS_LABEL" \
+    --arg prov_h "$(fmt_size "$TOTAL_PROV")" \
+    --arg used_h "$(fmt_size "$TOTAL_USED")" '{
     generated: (now|todate), scope: $scope,
     summary: { vm_count: '"$VM_COUNT"', pvc_rows: '"${#ROWS[@]}"',
       total_provisioned_gib: '"$TOTAL_PROV"',
-      total_used_gib: (if '"$ROWS_WITH_USED"'>0 then '"$TOTAL_USED"' else null end) },
+      total_provisioned_human: $prov_h,
+      total_used_gib: (if '"$ROWS_WITH_USED"'>0 then '"$TOTAL_USED"' else null end),
+      total_used_human: (if '"$ROWS_WITH_USED"'>0 then $used_h else null end) },
     rows: . }' > "$f"
   log "JSON saved -> $f"
 }

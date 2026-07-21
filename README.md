@@ -15,8 +15,8 @@ team-gamma    build-cache-01 Running    build-cache-01-disk-0   px-rwx-block-kub
 Summary
   VMs found         : 14
   PVC rows          : 36
-  Total Provisioned : 17514.00 GiB
-  Total Used        : 4761.80 GiB
+  Total Provisioned : 17.10 TiB  (17514.00 GiB)
+  Total Used        : 4.65 TiB  (4761.80 GiB)
 ```
 
 ---
@@ -141,9 +141,17 @@ Add `-p "$PROM"` to any of them for live utilization.
 | `USED` | `px_volume_usage_bytes` | `N/A` without `-p`, or if the volume has no series |
 | `USAGE%` | computed | `used / provisioned × 100` |
 
-Every size is normalized to **GiB**. The converter handles the full set of Kubernetes quantity suffixes — binary `Ei`/`Pi`/`Ti`/`Gi`/`Mi`/`Ki`, decimal `E`/`P`/`T`/`G`/`M`/`k`, and bare byte counts — so a PVC requested as `1Ti` and one requested as `1024Gi` sum correctly, as do mixed binary and decimal estates.
+### Units
+
+**Per-row sizes are always GiB.** Rows are meant to be sorted, filtered, and summed in a spreadsheet, so they use one fixed unit — a column mixing `40 GiB` with `2 TiB` sorts as text and silently misorders.
+
+**Summary totals scale to whatever unit reads naturally** — GiB below 1024, then TiB, then PiB — with the exact GiB figure kept in parentheses. A real cluster total prints as `108.29 TiB  (110887.00 GiB)` rather than a bare six-digit GiB number that nobody can eyeball.
+
+Input parsing accepts the full set of Kubernetes quantity suffixes — binary `Ei`/`Pi`/`Ti`/`Gi`/`Mi`/`Ki`, decimal `E`/`P`/`T`/`G`/`M`/`k`, and bare byte counts — so a PVC requested as `1Ti` and one requested as `1024Gi` sum correctly, as do mixed binary and decimal estates.
 
 Suffix matching is anchored, so `1Ti` resolves as tebibytes (1024.00 GiB) rather than being caught by the decimal `T` branch (931.32 GiB). This matters: every suffix needs its own branch, because an unhandled one falls through to the bare-bytes branch where awk coerces `"1Pi"` to `1` and reports **0.00 GiB** — silently under-counting a real volume instead of raising an error.
+
+The CSV `TOTAL` row stays in GiB, unscaled, so downstream parsers see a stable unit.
 
 ### The JSON shape
 
@@ -155,7 +163,9 @@ Suffix matching is anchored, so `1Ti` resolves as tebibytes (1024.00 GiB) rather
     "vm_count": 14,
     "pvc_rows": 36,
     "total_provisioned_gib": 17514.00,
-    "total_used_gib": 4761.80
+    "total_provisioned_human": "17.10 TiB",
+    "total_used_gib": 4761.80,
+    "total_used_human": "4.65 TiB"
   },
   "rows": [
     {

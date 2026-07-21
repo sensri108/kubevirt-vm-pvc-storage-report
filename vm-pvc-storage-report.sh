@@ -63,14 +63,29 @@ else
 fi
 
 # ── unit converter ─────────────────────────────────────────────────────────
+# Normalizes any Kubernetes quantity suffix to GiB. Covers the full binary set
+# (Ki/Mi/Gi/Ti/Pi/Ei) and the decimal set (k/M/G/T/P/E); a bare number is
+# treated as bytes. Suffixes are anchored, so "Ti" is never matched by the "T"
+# branch. Every suffix must have a branch: an unhandled one falls through to
+# the byte branch, where awk coerces e.g. "1Pi" to 1 and reports 0.00 GiB --
+# silently under-counting a real volume rather than erroring.
 to_gib() {
   awk -v r="$1" 'BEGIN {
-    if      (r~/Ti$/) { sub(/Ti$/,"",r); printf "%.2f",r*1024 }
+    # binary (power-of-two) suffixes
+    if      (r~/Ei$/) { sub(/Ei$/,"",r); printf "%.2f",r*1073741824 }
+    else if (r~/Pi$/) { sub(/Pi$/,"",r); printf "%.2f",r*1048576 }
+    else if (r~/Ti$/) { sub(/Ti$/,"",r); printf "%.2f",r*1024 }
     else if (r~/Gi$/) { sub(/Gi$/,"",r); printf "%.2f",r }
     else if (r~/Mi$/) { sub(/Mi$/,"",r); printf "%.2f",r/1024 }
     else if (r~/Ki$/) { sub(/Ki$/,"",r); printf "%.2f",r/1048576 }
-    else if (r~/G$/)  { sub(/G$/, "",r); printf "%.2f",r*0.931322 }
-    else if (r~/M$/)  { sub(/M$/, "",r); printf "%.2f",r/1024 }
+    # decimal (power-of-ten) suffixes, scaled by 10^n / 2^30
+    else if (r~/E$/)  { sub(/E$/, "",r); printf "%.2f",r*931322574.615478 }
+    else if (r~/P$/)  { sub(/P$/, "",r); printf "%.2f",r*931322.574615478 }
+    else if (r~/T$/)  { sub(/T$/, "",r); printf "%.2f",r*931.322574615478 }
+    else if (r~/G$/)  { sub(/G$/, "",r); printf "%.2f",r*0.931322574615478 }
+    else if (r~/M$/)  { sub(/M$/, "",r); printf "%.2f",r*0.000931322574615478 }
+    else if (r~/k$/)  { sub(/k$/, "",r); printf "%.2f",r*0.000000931322574615478 }
+    # bare byte count
     else              { printf "%.2f",r/1073741824 }
   }'
 }

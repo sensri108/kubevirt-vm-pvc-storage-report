@@ -141,7 +141,9 @@ Add `-p "$PROM"` to any of them for live utilization.
 | `USED` | `px_volume_usage_bytes` | `N/A` without `-p`, or if the volume has no series |
 | `USAGE%` | computed | `used / provisioned × 100` |
 
-Every size is normalized to **GiB**. The converter handles `Ti`/`Gi`/`Mi`/`Ki` binary units, decimal `G`/`M`, and bare byte counts — so a PVC requested as `1Ti` and one requested as `1024Gi` sum correctly.
+Every size is normalized to **GiB**. The converter handles the full set of Kubernetes quantity suffixes — binary `Ei`/`Pi`/`Ti`/`Gi`/`Mi`/`Ki`, decimal `E`/`P`/`T`/`G`/`M`/`k`, and bare byte counts — so a PVC requested as `1Ti` and one requested as `1024Gi` sum correctly, as do mixed binary and decimal estates.
+
+Suffix matching is anchored, so `1Ti` resolves as tebibytes (1024.00 GiB) rather than being caught by the decimal `T` branch (931.32 GiB). This matters: every suffix needs its own branch, because an unhandled one falls through to the bare-bytes branch where awk coerces `"1Pi"` to `1` and reports **0.00 GiB** — silently under-counting a real volume instead of raising an error.
 
 ### The JSON shape
 
@@ -251,7 +253,6 @@ Reading Prometheus additionally requires `cluster-monitoring-view`.
 ## Known limitations
 
 - **`PROM_CAP` is collected but unused.** `px_volume_capacity_bytes` is fetched and indexed, but the report uses the PVC's own `.status.capacity.storage` for the provisioned column. The data is there if you want to add a column reconciling the two — a mismatch between what Kubernetes and the storage layer each believe is provisioned is a genuinely useful signal.
-- **Decimal `M` is treated as binary `Mi`.** In the unit converter, decimal `G` is correctly scaled by 0.931322 but decimal `M` is divided by 1024 — so a PVC requested as `1000M` reports 0.98 GiB instead of 0.91 GiB, a ~7% overstatement. Kubernetes storage requests are almost always written in binary units (`Gi`/`Ti`), so this rarely fires; the one-line fix is to change the `M` branch to `r*0.000931322`.
 - **Only the first access mode** is shown per PVC.
 - **Hotplugged disks** attached at runtime but absent from `.spec.template.spec.volumes` are not reported.
 - **Usage is an instant query** — a point-in-time sample, not a max or average over a window. For trend analysis, query the same metric with `query_range`.

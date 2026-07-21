@@ -26,6 +26,10 @@
 #   -o | --output     <fmt>  table (default) | csv | json
 #   -p | --prometheus <url>  Prometheus base URL
 #   -t | --token      <tok>  Bearer token (default: oc whoami -t)
+#
+# Maintainer: Sen Sri (https://github.com/sensri108)
+# Repository: https://github.com/sensri108/kubevirt-vm-pvc-storage-report
+# License:    MIT
 # =============================================================================
 
 set -euo pipefail

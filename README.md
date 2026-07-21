@@ -268,6 +268,13 @@ Reading Prometheus additionally requires `cluster-monitoring-view`.
 - **Usage is an instant query** — a point-in-time sample, not a max or average over a window. For trend analysis, query the same metric with `query_range`.
 - **No pagination.** Very large clusters (thousands of VMs) build the full JSON in memory.
 
+## Maintainer
+
+**Sen Sri** ([@sensri108](https://github.com/sensri108))
+
+Issues and pull requests welcome at
+[sensri108/kubevirt-vm-pvc-storage-report](https://github.com/sensri108/kubevirt-vm-pvc-storage-report).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

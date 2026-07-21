@@ -88,39 +88,39 @@ chmod +x vm-pvc-storage-report.sh
 
 ### Examples
 
-Current namespace, table to terminal (also drops a CSV copy):
-
 ```bash
+chmod +x vm-pvc-storage-report.sh
+
+# Current project, table output (provisioned only)
 ./vm-pvc-storage-report.sh
+
+# Specific namespace
+./vm-pvc-storage-report.sh -n openshift-cnv
+
+# All namespaces, CSV output
+./vm-pvc-storage-report.sh -A -o csv
+
+# With used-space from Prometheus (gets you the USED + USAGE% columns)
+PROM=$(oc get route -n openshift-monitoring thanos-querier -o jsonpath='https://{.spec.host}')
+./vm-pvc-storage-report.sh -A -p "$PROM" -o table
+
+# JSON output for downstream processing
+./vm-pvc-storage-report.sh -A -o json
 ```
 
-One namespace with live usage data:
+Note that the `jsonpath` above already emits the `https://` scheme, so `$PROM` is passed
+through bare. Prefixing it again — `-p "https://${PROM}"` — yields `https://https://host`
+and every usage query fails, silently degrading the report to `N/A` in the USED column.
+
+To sanity-check the URL before a long run:
 
 ```bash
-./vm-pvc-storage-report.sh \
-  -n team-alpha \
-  -p https://thanos-querier-openshift-monitoring.apps.example.com
+echo "$PROM"    # -> https://thanos-querier-openshift-monitoring.apps.example.com
 ```
 
-Whole cluster to CSV — the usual capacity-review invocation:
-
-```bash
-./vm-pvc-storage-report.sh -A -o csv \
-  -p https://thanos-querier-openshift-monitoring.apps.example.com
-```
-
-JSON for downstream tooling:
-
-```bash
-./vm-pvc-storage-report.sh -A -o json -p https://thanos.example.com
-```
-
-On an OpenShift cluster the Thanos route is usually:
-
-```bash
-PROM=https://$(oc get route thanos-querier -n openshift-monitoring -o jsonpath='{.spec.host}')
-./vm-pvc-storage-report.sh -A -o csv -p "$PROM"
-```
+The last two invocations omit `-p`, so they report **provisioned capacity only**. That
+is still the complete VM-to-PVC inventory — you just get `N/A` for `USED` and `USAGE%`.
+Add `-p "$PROM"` to any of them for live utilization.
 
 ### Output files
 
